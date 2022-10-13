@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
     }
     else
     {        
-        printf("Too many parameters entered!\n");
+        fprintf(stderr, "Wrong number of parameters entered, exactly: %d!\n", argc-1);
         return 0;
     }    
     return 0;
