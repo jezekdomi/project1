@@ -2,6 +2,7 @@
 
 int main(int argc, char const *argv[])
 {
+    // zpracovani poctu parametru
     if (argc > 2)
     {
         fprintf(stderr, "Too many parameters!\n");
@@ -14,21 +15,33 @@ int main(int argc, char const *argv[])
     else
     {
         printf("Filtered list by: %s, will be displayed!\n", argv[1]);
-    }
-        
-    // load contacts from file and write them to stdout
-    char c;
-    int line = 0;
+    }    
 
+    // pocet radku seznamu
+    int c;
+    int i = 0;
+    int line = 1;
+    char arra[101];
     while ((c = getchar()) != EOF)
-    {              
-        if (c == 10)
+    {
+        while (c != 10)
         {
-            line++;
-            printf(",");
-        }
-        printf("%c", c);
-    }
-    
-    return 0;
+            i = 0;
+            continue;
+        }                                        
+    }    
+    printf("\n%d\n", line);    
+
+    // cislo muze znamenat
+    char *array[] = {
+        "abc",
+        "def",
+        "ghi",
+        "jkl",
+        "mno",
+        "pqrs",
+        "tuv",
+        "xyz"
+    };
+    printf("%c\n", array[0][0]);
 }
