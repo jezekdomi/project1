@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["123", "<", "${workspaceFolder}/seznam.txt"] ,
+            "args": ["12", "<", "${workspaceFolder}/seznam.txt"] ,
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
