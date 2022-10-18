@@ -77,18 +77,16 @@ int main(int argc, char const *argv[])
         int i_char_in_phone;
         int i_query = 0;
 
-        // loop pro cislo ve filtru
+        // query phone number
         while (i_query < (int)strlen(argv[1]))
         {
             i_char_in_phone = i_prev_matched + 1;
 
-            // loop pro cislo v telefonnim cisle
             while (argv[1][i_query] != contact[i_contact].phone[i_char_in_phone] && contact[i_contact].phone[i_char_in_phone] != '\0')
             {
                 i_char_in_phone++;
             }
 
-            // shoda ve znaku
             if (argv[1][i_query] == contact[i_contact].phone[i_char_in_phone] && i_prev_matched < i_char_in_phone)
             {
                 i_prev_matched = i_char_in_phone;
@@ -96,38 +94,11 @@ int main(int argc, char const *argv[])
             }            
             i_query++;
 
-            // pri match a konci filtru -> ulozeni kontaktu
             if (i_query == num_match_count && i_query == (int)strlen(argv[1]))
             {
                 printf("%s, %s\n", contact[i_contact].name, contact[i_contact].phone);
             }
-        }        
-
-        // int i_char_in_phone_number;
-
-        // // loop pro cislo ve filtru
-        // while (i_query < strlen(argv[1]))
-        // {
-        //     i_char_in_phone_number = i_found_phone_number_char + 1;
-
-        //     // loop pro cislo ve jmene
-        //     while (argv[1][i_query] != contact[i_contact].phone[i_char_in_phone_number] && contact[i_contact].phone[i_char_in_phone_number] != '\0')
-        //     {
-        //         i_char_in_phone_number++;
-        //     }            
-
-        //     // shoda ve znaku
-        //     if (argv[1][i_query] == contact[i_contact].phone[i_char_in_phone_number] && i_found_phone_number_char < i_char_in_phone_number) {
-        //         i_found_phone_number_char = i_char_in_phone_number;
-        //         phone_number_chars_match_count++;
-        //     }            
-        //     i_query++;
-
-        //     // pri match a konci filtru -> ulozeni kontaktu
-        //     if (i_query == phone_number_chars_match_count && i_query == strlen(argv[1])) {
-        //         printf("%s, %s\n", contact[i_contact].name, contact[i_contact].phone);
-        //     }
-        // }
+        }
         i_contact++;        
     }
 }
