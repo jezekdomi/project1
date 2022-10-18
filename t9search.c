@@ -78,7 +78,7 @@ int main(int argc, char const *argv[])
         int i_query = 0;
 
         // loop pro cislo ve filtru
-        while (i_query < strlen(argv[1]))
+        while (i_query < (int)strlen(argv[1]))
         {
             i_char_in_phone = i_prev_matched + 1;
 
@@ -97,7 +97,7 @@ int main(int argc, char const *argv[])
             i_query++;
 
             // pri match a konci filtru -> ulozeni kontaktu
-            if (i_query == num_match_count && i_query == strlen(argv[1]))
+            if (i_query == num_match_count && i_query == (int)strlen(argv[1]))
             {
                 printf("%s, %s\n", contact[i_contact].name, contact[i_contact].phone);
             }
