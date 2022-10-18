@@ -1,12 +1,16 @@
 {
-"version": "0.2.0",
+    "version": "0.2.0",
     "configurations": [
         {
             "name": "gcc-9 - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["12", "<", "${workspaceFolder}/seznam.txt"] ,
+            "args": [
+                "111",
+                "<",
+                "${workspaceFolder}/seznam.txt"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
