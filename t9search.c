@@ -2,30 +2,28 @@
 #include <ctype.h>
 #include <string.h>
 
-struct Kontakt
+struct Contact
 {
-    char jmeno[100]; 
-    char telefon[100];    
+    char name[100]; 
+    char phone[100];    
 };
 
 int main(int argc, char const *argv[])
-{
-    // zpracovani poctu zadanych argumentu
+{    
     if (argc > 2)
     {
         fprintf(stderr, "Too many arguments!\n");
         return 1;
-    } 
+    }
     else if (argc == 1)
     {
         printf("Whole list be displayed!\n");
-    }
+    }    
     else
     {
         printf("List filtered by: %s, shall be displayed!\n", argv[1]);
     }    
     
-    // jsou k dispozici nejake kontakty?
     int c;    
     if ((c = getchar()) == EOF)
     {
@@ -34,72 +32,66 @@ int main(int argc, char const *argv[])
     }
 
     // cti radek a zapis ho do struct kontakt
-    int ctenyRadek = 1;
-    char prectenyRadek[100];
-    int poradiKontaktu;
-    struct Kontakt kontakt[42];
+    unsigned current_line = 1;
+    char line[100];
+    int i_contact;
+    struct Contact contact[42];
 
     do
     {        
         int i = 0;
         do
         {
-            prectenyRadek[i] = tolower(c);
+            line[i] = tolower(c);
             i++;
         } 
         while ((c = getchar()) != '\r' && c != EOF && i < 100);
-        prectenyRadek[i] = '\0';
+        line[i] = '\0';
 
-        // prirazeni radku do kontaktu
-        poradiKontaktu = ctenyRadek % 2 == 1 ? ctenyRadek / 2 : ctenyRadek / 2 - 1;
-        
-        strcpy(ctenyRadek % 2 == 1 ? kontakt[poradiKontaktu].jmeno : kontakt[poradiKontaktu].telefon, prectenyRadek);
-        // if (ctenyRadek % 2 == 0) printf("%s, %s\n", kontakt[poradiKontaktu].jmeno, kontakt[poradiKontaktu].telefon);            
+        i_contact = current_line % 2 == 1 ? current_line / 2 : current_line / 2 - 1;
+        strcpy(current_line % 2 == 1 ? contact[i_contact].name : contact[i_contact].phone, line);
         
         // spotreba zbytecneho znaku '\n' na stdin
         c = getchar();
-        ctenyRadek++;
+        current_line++;
+
+        // if (current_line % 2 == 0) printf("%s, %s\n", contact[i_contact].name, contact[i_contact].phone);
     }    
-    while ((c = getchar()) != EOF && ctenyRadek <= 84);
-        
-    int kontaktNaRade = 0;
-    int pocetKontaktu = poradiKontaktu + 1;
+    while ((c = getchar()) != EOF && current_line <= 84);
+            
+    int contacts_count = i_contact + 1;
+    i_contact = 0;
+
     // nalezeni cisla s prerusenou posloupnosti odpovidajici filtru
-    // pocet iteraci podle poctu kontaktu
-    // loop pro kontakt na rade
-    while (kontaktNaRade < pocetKontaktu)
+    while (i_contact < contacts_count)
     {
-        int shoda = 0;        
-        int indexNalezeneho = -1;   
-        int cisloNaRadeVeFiltru = 0;
+        int chars_match_count = 0;        
+        int i_found_phone_number = -1;   
+        int i_query = 0;
+
         // loop pro cislo ve filtru
-        while (argv[1][cisloNaRadeVeFiltru] != '\0' && cisloNaRadeVeFiltru < strlen(argv[1]))
+        while (argv[1][i_query] != '\0' && i_query < strlen(argv[1]))
         {
-            int cisloNaRadeVTelefonu = indexNalezeneho + 1;
+            int i_char_in_phone_number = i_found_phone_number + 1;
+
             // loop pro cislo v telefonnim cisle
-            // pokud se cislo filtru shoduje s cislem v telefonnim cisle
-            // a ma vyssi index nez predchozi nalezene, tak prejdeme na dalsi cislo ve filtru
-            while (argv[1][cisloNaRadeVeFiltru] != kontakt[kontaktNaRade].telefon[cisloNaRadeVTelefonu] && 
-                kontakt[kontaktNaRade].telefon[cisloNaRadeVTelefonu] != '\0')
+            while (argv[1][i_query] != contact[i_contact].phone[i_char_in_phone_number] && contact[i_contact].phone[i_char_in_phone_number] != '\0')
             {
-                cisloNaRadeVTelefonu++;
+                i_char_in_phone_number++;
             }
 
-            // pokud mame match cisla a index nasledujiciho je vetsi nez predtim, dame match++
-            if (argv[1][cisloNaRadeVeFiltru] == kontakt[kontaktNaRade].telefon[cisloNaRadeVTelefonu]
-                && indexNalezeneho < cisloNaRadeVTelefonu)
-            {
-                indexNalezeneho = cisloNaRadeVTelefonu;
-                shoda++;
+            // shoda ve znaku
+            if (argv[1][i_query] == contact[i_contact].phone[i_char_in_phone_number] && i_found_phone_number < i_char_in_phone_number) {
+                i_found_phone_number = i_char_in_phone_number;
+                chars_match_count++;
             }            
-            cisloNaRadeVeFiltru++;
+            i_query++;
 
-            if (cisloNaRadeVeFiltru == shoda && cisloNaRadeVeFiltru == strlen(argv[1]))
-            {
-                printf("%s, %s\n", kontakt[kontaktNaRade].jmeno, kontakt[kontaktNaRade].telefon);
-                // printf("Match in phone number on %d. contact\n", kontaktNaRade + 1);
+            // pri match a konci filtru -> ulozeni kontaktu
+            if (i_query == chars_match_count && i_query == strlen(argv[1])) {
+                printf("%s, %s\n", contact[i_contact].name, contact[i_contact].phone);
             }
         }        
-        kontaktNaRade++;        
-    }    
+        i_contact++;        
+    }
 }
