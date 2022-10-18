@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
             "args": [
-                "111",
+                "0",
                 "<",
                 "${workspaceFolder}/seznam.txt"
             ],
