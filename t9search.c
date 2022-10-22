@@ -61,10 +61,10 @@ void read_stdin()
 /* --------- */
 
 int main(int argc, char const *argv[])
-{
+{    
     read_stdin();
-    return 0;
-    printf("Args: %d, %s\n", argc, argv[1]);
+    
+    printf("argc: %d, argv[1]: %s\n", argc, argv[1]);
     printf("%s, %s\n", contact[0].name, contact[0].phone);
     printf("%s, %s\n", contact[1].name, contact[1].phone);
 }
