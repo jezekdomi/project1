@@ -3,6 +3,7 @@
         "stdio.h": "c",
         "cctype": "c",
         "stdbool.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "typeinfo": "c"
     }
 }

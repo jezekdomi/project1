@@ -153,7 +153,9 @@ void query(Contact *contact, const int number_of_args, const char query[])
         return;
     }
     
-    printf("%s", contact[1].name);
+    printf("TEST: %s", contact[1].name);
+    printf("TEST: %s", query);
+
     // zde uz zbyva jen nastavit u kontaktu hidden = true pokud u nej ani u jmena ani cisla nenajdeme shodu
 }
 
