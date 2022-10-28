@@ -34,6 +34,27 @@ const int options[10][5] = {
 
 /* FUNCTIONS */
 
+void validate_args(const int number_of_args, const char query[]);
+void read_stdin(Contact *contact, int *num_of_contacts);
+int matches_option(int query_key, int contact_key);
+void query(Contact *contact, const int number_of_args, const char query[]);
+void print_contacts(Contact *contact, int num_of_contacts);
+
+/* --------- */
+
+int main(int argc, char const *argv[])
+{    
+    validate_args(argc, argv[1]);
+
+    int num_of_contacts = 0;
+    Contact contact[MAX_CONTACTS];
+
+    read_stdin(contact, &num_of_contacts);
+
+    query(contact, argc, argv[1]);
+    print_contacts(contact, num_of_contacts);
+}
+
 void validate_args(const int number_of_args, const char query[])
 {    
     if (number_of_args == 1)
@@ -70,7 +91,7 @@ void read_stdin(Contact *contact, int *num_of_contacts)
         fprintf(stderr, "No data on stdin!\n");
         exit(0);
     }
-
+    
     for (line = 1; c != EOF && line / 2 <= MAX_CONTACTS; line++)
     {
         for (int i = 0; (c = (i != 0 || line != 1) ? tolower(getchar()) : c) != '\n'; i++)
@@ -108,7 +129,7 @@ void read_stdin(Contact *contact, int *num_of_contacts)
             }
         }        
     }
-    num_of_contacts = line;
+    *num_of_contacts = line;
 }
 
 int matches_option(int query_key, int contact_key)
@@ -135,7 +156,7 @@ void query(Contact *contact, const int number_of_args, const char query[])
     // zde uz zbyva jen nastavit u kontaktu hidden = true pokud u nej ani u jmena ani cisla nenajdeme shodu
 }
 
-void print_contacts(Contact *contact, int *num_of_contacts)
+void print_contacts(Contact *contact, int num_of_contacts)
 {
     for (int i = 0; i < num_of_contacts; i++)
     {
@@ -144,17 +165,4 @@ void print_contacts(Contact *contact, int *num_of_contacts)
             printf("%s, %s\n", contact[i].name, contact[i].phone);
         }        
     }    
-}
-/* --------- */
-
-int main(int argc, char const *argv[])
-{    
-    validate_args(argc, argv[1]);
-
-    int *num_of_contacts;
-    Contact contact[MAX_CONTACTS];
-    read_stdin(contact, num_of_contacts);
-
-    query(contact, argc, argv[1]);
-    print_contacts(contact, num_of_contacts);
 }
