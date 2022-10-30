@@ -33,7 +33,7 @@
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
             "args": [
-                "",
+                "", 
                 "<",
                 "seznam.txt"],
             "stopAtEntry": false,

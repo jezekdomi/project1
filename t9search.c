@@ -4,21 +4,26 @@
 #include <ctype.h>
 
 #define KEYS 10
-#define MAX_OPTIONS 5
+#define MAX_OPTIONS 6
 #define MAX_LINE_LENGTH 100
 #define MAX_CONTACTS 42
 
+#define INVALID_KEY_ERROR "Invalid key found in phone number!\n"
+#define UNEXPECTED_VALUES_ERROR "Unexpected values on function call!\n"
+#define TOO_MANY_ARGS_ERROR "Too many arguments on function call!\n"
+#define NOT_FOUND_ERROR "Not found!\n"
+
 const char keys[KEYS][MAX_OPTIONS] = {
-    {'0', '+'},
-    {},
-    {'2', 'a', 'b', 'c'},
-    {'3', 'd', 'e', 'f'},
-    {'4', 'g', 'h', 'i'},
-    {'5', 'j', 'k', 'l'},
-    {'6', 'm', 'n', 'o'},
-    {'7', 'p', 'q', 'r', 's'},
-    {'8', 't', 'u', 'v'},
-    {'9', 'w', 'x', 'y', 'z'}
+    {'0', '+', '\0'},
+    {'1', '\0'},
+    {'2', 'a', 'b', 'c', '\0'},
+    {'3', 'd', 'e', 'f', '\0'},
+    {'4', 'g', 'h', 'i', '\0'},
+    {'5', 'j', 'k', 'l', '\0'},
+    {'6', 'm', 'n', 'o', '\0'},
+    {'7', 'p', 'q', 'r', 's', '\0'},
+    {'8', 't', 'u', 'v', '\0'},
+    {'9', 'w', 'x', 'y', 'z', '\0'}
 };
 
 typedef struct
@@ -42,12 +47,26 @@ bool check_save_line(Contact *contact, bool is_line_odd, bool *found_invalid_val
 */
 int check_query_and_get_length(const char *query);
 
+/**
+ * @param *object Object to compare query to
+ * @param *contact Object's parent
+ * @return Returns TRUE when contact matches query
+*/
+bool query(char *object, Contact *contact, const char *query, int query_length);
+
+/**
+ * @return Returns TRUE when key from contact matches its option
+ * @param contact_key Key from contact atribute
+ * @param char_key Key from query
+*/
+bool key_matches_option(char contact_key, char query_key);
+
 int main(int argc, char const *argv[])
 {
     int contact_count;
     Contact contacts[MAX_CONTACTS];
 
-    for (int line_on_turn = 1; line_on_turn < MAX_CONTACTS * 2 + 1; line_on_turn++)
+    for (int line_on_turn = 1; line_on_turn < MAX_CONTACTS * 2; line_on_turn++)
     {
         int contact_on_turn = (line_on_turn - 1) / 2;
         bool is_line_odd = (line_on_turn % 2) == 1;
@@ -60,14 +79,13 @@ int main(int argc, char const *argv[])
 
         if (found_invalid_value)
         {
-            fprintf(stderr, "Invalid key found in phone number!");
+            fprintf(stderr, INVALID_KEY_ERROR);
             return 1;
         }
         
         if ((line_on_turn % 2) == 0) contacts[contact_on_turn].hidden = false;
 
         contact_count = contact_on_turn + 1;
-        printf("%d, %d, %d\n", is_line_odd, contact_on_turn, line_on_turn);
     }
 
     if (argc == 2)
@@ -76,24 +94,25 @@ int main(int argc, char const *argv[])
 
         if (query_length == 0)
         {
-            fprintf(stderr, "Unexpected values on function call!\n");
+            fprintf(stderr, UNEXPECTED_VALUES_ERROR);
             return 1;
         }        
 
         for (int i = 0; i < contact_count; i++)
-        {
-            /* CODE TO WRITE */
-
-            // 
+        {       
+            if (!query(contacts[i].phone, &contacts[i], argv[1], query_length))
+            {
+                query(contacts[i].name, &contacts[i], argv[1], query_length);
+            }
         }
     }
     else if (argc != 1)
     {
-        fprintf(stderr, "Too many arguments on function call!\n");
+        fprintf(stderr, TOO_MANY_ARGS_ERROR);
         return 1;
     }
 
-    int hidden_count = 0;
+    int hidden_contacts_count = 0;
     for (int i = 0; i < contact_count; i++)
     {
         if (contacts[i].hidden == false)
@@ -102,13 +121,13 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            hidden_count++;
+            hidden_contacts_count++;
         }
     }
 
-    if (hidden_count == contact_count)
+    if (hidden_contacts_count == contact_count)
     {
-        printf("Not found!\n");
+        fprintf(stderr, NOT_FOUND_ERROR);
     }    
 
     return 0;
@@ -171,5 +190,59 @@ int check_query_and_get_length(const char *query)
             return 0;
         }        
     }
-    return ++i;
+    return i;
+}
+
+bool query(char *object, Contact *contact, const char *query, int query_length)
+{
+    for (int i = 0; object[i] != '\0'; i++)
+    {
+        int match_count = 0;
+
+        for (int j = 0; j < query_length; j++)
+        {
+            if (object[i + j] == '\0')
+            {
+                contact->hidden = true;
+                return false;
+            }
+
+            if (key_matches_option(object[i + j], query[j]))
+            {
+                match_count++;
+            }
+        }
+
+        if (match_count == query_length)
+        {
+            contact->hidden = false;
+            return true;
+        }
+        else
+        {
+            contact->hidden = true;
+        }
+    }
+    
+    return false;
+}
+
+bool key_matches_option(char object_key, char query_key)
+{
+    int option;
+    int anchor = '0';
+    int position = query_key - anchor;
+
+    for (int i = 0; keys[position][i] != '\0'; i++)
+    {
+        position = query_key - anchor;
+        option = keys[position][i];
+
+        if (option == object_key)
+        {
+            return true;
+        }
+    }    
+    
+    return false;
 }
