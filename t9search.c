@@ -34,7 +34,13 @@ Contact;
  * @param is_line_odd Decide if line is odd or even
  * @return Returns FALSE on EOF
 */
-bool check_save_line(Contact *contact, bool is_line_odd);
+bool check_save_line(Contact *contact, bool is_line_odd, bool *found_invalid_value);
+
+/**
+ * @param query[] Query to count
+ * @return Returns length of query
+*/
+int check_query_and_get_length(const char *query);
 
 int main(int argc, char const *argv[])
 {
@@ -45,13 +51,20 @@ int main(int argc, char const *argv[])
     {
         int contact_on_turn = (line_on_turn - 1) / 2;
         bool is_line_odd = (line_on_turn % 2) == 1;
+        bool found_invalid_value = false;
 
-        if (!check_save_line(&contacts[contact_on_turn], is_line_odd))
+        if (!check_save_line(&contacts[contact_on_turn], is_line_odd, &found_invalid_value))
         {
             break;
         }
 
-        if ((line_on_turn % 2) == 0) contacts[contact_on_turn].hidden = true;
+        if (found_invalid_value)
+        {
+            fprintf(stderr, "Invalid key found in phone number!");
+            return 1;
+        }
+        
+        if ((line_on_turn % 2) == 0) contacts[contact_on_turn].hidden = false;
 
         contact_count = contact_on_turn + 1;
         printf("%d, %d, %d\n", is_line_odd, contact_on_turn, line_on_turn);
@@ -59,25 +72,49 @@ int main(int argc, char const *argv[])
 
     if (argc == 2)
     {
+        int query_length = check_query_and_get_length(argv[1]);
+
+        if (query_length == 0)
+        {
+            fprintf(stderr, "Unexpected values on function call!\n");
+            return 1;
+        }        
+
         for (int i = 0; i < contact_count; i++)
-        {/*
-            contacts[i].phone
-            contacts[i].name
-            contacts[i].hidden*/
+        {
+            /* CODE TO WRITE */
+
+            // 
         }
     }
     else if (argc != 1)
     {
-        fprintf(stderr, "Some kind of error!");
-        return EXIT_FAILURE;
+        fprintf(stderr, "Too many arguments on function call!\n");
+        return 1;
     }
 
-    // vypis kontaktuu
+    int hidden_count = 0;
+    for (int i = 0; i < contact_count; i++)
+    {
+        if (contacts[i].hidden == false)
+        {
+            printf("%s, %s\n", contacts[i].name, contacts[i].phone);
+        }
+        else
+        {
+            hidden_count++;
+        }
+    }
 
-    return EXIT_SUCCESS;
+    if (hidden_count == contact_count)
+    {
+        printf("Not found!\n");
+    }    
+
+    return 0;
 }
 
-bool check_save_line(Contact *contact, bool is_line_odd)
+bool check_save_line(Contact *contact, bool is_line_odd, bool *found_invalid_value)
 {
     int key;
     int i = 0;
@@ -85,20 +122,21 @@ bool check_save_line(Contact *contact, bool is_line_odd)
     {
         key = tolower(getchar());
 
-        if (key == EOF) 
-            return false;
-                
-        if (is_line_odd) // muze prijit cokoli, co nechceme
+        if (key == EOF)
         {
-            if (isalpha(key) || key == ' ' || key == '.')
-            {
-                contact->name[i] = key;
-            }
-            else if (key == '\r' || key == '\n')
+            return false;
+        }
+                
+        if (is_line_odd)
+        {
+            if (key == '\r' || key == '\n')
             {
                 contact->name[i] = '\0';
             }
-            else exit(EXIT_FAILURE);
+            else
+            {
+                contact->name[i] = key;
+            }
         }
         else
         {
@@ -108,13 +146,30 @@ bool check_save_line(Contact *contact, bool is_line_odd)
             }
             else if (key == '\r' || key == '\n')
             {
-                contact->phone[i] = '\0';                
+                contact->phone[i] = '\0';
             }
-            else exit(EXIT_FAILURE);         
+            else
+            {
+                *found_invalid_value = true;
+                return true;
+            }
         }        
         i++;
 
     } while (key != '\n');
 
     return true;
+}
+
+int check_query_and_get_length(const char *query)
+{
+    int i;
+    for (i = 0; query[i] != '\0'; i++)
+    {
+        if (!isdigit(query[i]))
+        {            
+            return 0;
+        }        
+    }
+    return ++i;
 }
